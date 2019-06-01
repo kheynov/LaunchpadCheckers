@@ -72,7 +72,12 @@ public class Table {
                 if (isMapContains(checker.move(list.get(i)).getX(), checker.move(list.get(i)).getY())) {
                     if (checker.move(list.get(i)).getX() == checkerList.get(j).getX()
                             && checker.move(list.get(i)).getY() == checkerList.get(j).getY()) {
-                        list.set(i, new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1));
+                        if (isMapContains(checker.move(new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1)).getX(),
+                                checker.move(new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1)).getY())) {
+                            list.set(i, new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1));
+                        } else {
+                            list.remove(i);
+                        }
                     }
                 }
             }

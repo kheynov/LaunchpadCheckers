@@ -21,8 +21,8 @@ public class Main implements Runnable {
 
             drawer.toggleDrawingAvailableMoves(false);
 
-            table.add(new Checker(2, 4, Color.RED));
-            table.add(new Checker(3, 3, Color.GREEN));
+            table.add(new Checker(0, 0, Color.RED));
+            table.add(new Checker(1, 1, Color.GREEN));
 
             drawer.clear();
             drawer.render();
