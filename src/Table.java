@@ -7,6 +7,21 @@ public class Table {
 
     private Launchpad launchpad;
     private ArrayList<Checker> checkerList = new ArrayList<>();
+    private State state = State.DRAW_CHECKERS;
+
+    public enum State {
+        DRAW_CHECKERS,
+        DRAW_AVAILABLE_MOVES
+    }
+
+    public State getState() {
+        System.out.println("table.state = " + state);
+        return state;
+    }
+
+    public void setState(State state) {
+        this.state = state;
+    }
 
     public enum Direction {
         UP_LEFT,
@@ -72,12 +87,7 @@ public class Table {
                 if (isMapContains(checker.move(list.get(i)).getX(), checker.move(list.get(i)).getY())) {
                     if (checker.move(list.get(i)).getX() == checkerList.get(j).getX()
                             && checker.move(list.get(i)).getY() == checkerList.get(j).getY()) {
-                        if (isMapContains(checker.move(new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1)).getX(),
-                                checker.move(new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1)).getY())) {
-                            list.set(i, new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1));
-                        } else {
-                            list.remove(i);
-                        }
+                        list.set(i, new Vector(list.get(i).getDirection(), list.get(i).getLength() + 1));
                     }
                 }
             }

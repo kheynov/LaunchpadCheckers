@@ -12,7 +12,7 @@ public class Handler implements LaunchpadReceiver {
     private Launchpad launchpad;
     private Drawer drawer;
 
-    Handler(Table table, Launchpad lp, Drawer drawer) throws MidiUnavailableException {
+    Handler(Table table, Drawer drawer) throws MidiUnavailableException {
         this.table = table;
         this.drawer = drawer;
         this.launchpad = new Launchpad(this);
@@ -23,7 +23,8 @@ public class Handler implements LaunchpadReceiver {
         for (int i = 0; i < table.getCheckerList().size(); i++) {
             if (table.getCheckerList().get(i).getX() == pad.getX()
             && table.getCheckerList().get(i).getY() == pad.getY()) {
-                drawer.toggleDrawingAvailableMoves(true);
+                System.out.println("hui");
+                table.setState(Table.State.DRAW_AVAILABLE_MOVES);
                 drawer.setDrawingAvailableMovesChecker(table.getCheckerList().get(i));
             }
         }

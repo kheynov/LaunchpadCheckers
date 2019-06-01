@@ -1,3 +1,4 @@
+import javafx.scene.control.Tab;
 import org.rjung.util.launchpad.Color;
 import org.rjung.util.launchpad.Launchpad;
 import org.rjung.util.launchpad.Pad;
@@ -10,17 +11,11 @@ public class Drawer {
 
     private Table table;
     private Launchpad launchpad;
-    private boolean isDrawingAvailableMoves = false;
     private Checker isDrawingAvailableMovesChecker;
 
     Drawer(Table table, Launchpad launchpad) {
         this.table = table;
         this.launchpad = launchpad;
-    }
-
-    public void toggleDrawingAvailableMoves(boolean state) {
-        this.isDrawingAvailableMoves = state;
-        System.out.println(state);
     }
 
     public void setDrawingAvailableMovesChecker(Checker check) {
@@ -45,12 +40,10 @@ public class Drawer {
         clear();
         List<Checker> field = table.getCheckerList();
         renderCheckers(field);
-        if (isDrawingAvailableMoves){
+        if (table.getState() == Table.State.DRAW_AVAILABLE_MOVES){
             renderAvailableMoves(table.availableMoves(isDrawingAvailableMovesChecker));
-            toggleDrawingAvailableMoves(false);
+            table.setState(Table.State.DRAW_CHECKERS);
         }
-
-
     }
 
     public void clear() throws InvalidMidiDataException {

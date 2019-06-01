@@ -2,6 +2,7 @@ import org.rjung.util.launchpad.Color;
 import org.rjung.util.launchpad.Launchpad;
 
 public class Main implements Runnable {
+
     boolean isRunning = true;
 
     public static void main(String[] args) {
@@ -17,12 +18,12 @@ public class Main implements Runnable {
             lp = new Launchpad();
             Table table = new Table(lp);
             drawer = new Drawer(table, lp);
-            handler = new Handler(table, lp, drawer);
+            handler = new Handler(table, drawer);
 
-            drawer.toggleDrawingAvailableMoves(false);
+            table.setState(Table.State.DRAW_CHECKERS);
 
-            table.add(new Checker(0, 0, Color.RED));
-            table.add(new Checker(1, 1, Color.GREEN));
+            table.add(new Checker(2, 4, Color.RED));
+            table.add(new Checker(3, 3, Color.GREEN));
 
             drawer.clear();
             drawer.render();
