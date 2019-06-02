@@ -70,7 +70,7 @@ public class Table implements LaunchpadReceiver {
     Table() throws MidiUnavailableException {
         this.launchpad = new Launchpad(this);
         checkerList.add(new Checker(1, 1, Color.RED));
-        checkerList.add(new Checker(2, 2, Color.GREEN));
+        checkerList.add(new Checker(0, 0, Color.GREEN));
 
         checkerList.add(new Checker(5, 4, Color.GREEN));
         /*checkerList.add(new Checker(4, 3, Color.GREEN));
@@ -80,7 +80,6 @@ public class Table implements LaunchpadReceiver {
         clearDisplay();
         redraw();
     }
-
 
     public enum Direction {
         UP_LEFT,
@@ -144,11 +143,11 @@ public class Table implements LaunchpadReceiver {
     }
 
 
-    private boolean isLastChecker(int x, int y) {
+    private boolean isNotLastChecker(int x, int y) {//если это не крайняя клетка поля
         if (x == 0 || x == 7 || y == 0 || y == 7) {
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
 
@@ -159,7 +158,7 @@ public class Table implements LaunchpadReceiver {
             int x = availableMoves.get(i).getX(checker.getX());
             int y = availableMoves.get(i).getY(checker.getY());
             try {
-                launchpad.set(Pad.find(x, y), Color.AMBER);
+                launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
             } catch (InvalidMidiDataException e) {
                 e.printStackTrace();
             }
@@ -174,51 +173,66 @@ public class Table implements LaunchpadReceiver {
         int x = checker.getX();
         int y = checker.getY();
         List<Vector> list = new ArrayList<>();
-        if (isBusy(x + 1, y - 1) && !isLastChecker(x+1, y-1)) {
-            if (!isBusy(x + 2, y - 2)) {
-                if (Objects.requireNonNull(findChekerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()){
-                    list.add(new Vector(Direction.DOWN_RIGHT, 2));
+        if (x != 0) {
+            if (y != 0) {
+                if (isBusy(x - 1, y - 1)) {
+                    if (isNotLastChecker(x - 1, y - 1)) {
+                        if (!isBusy(x - 2, y - 2)) {
+                            if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {
+                                list.add(new Vector(Direction.DOWN_LEFT, 2));
+                            }
+                        }
+                    }
+                } else {
+                    list.add(new Vector(Direction.DOWN_LEFT, 1));
                 }
             }
-        } else {
-            list.add(new Vector(Direction.DOWN_RIGHT, 1));
-        }
-
-        if (isBusy(x + 1, y + 1) && !isLastChecker(x+1, y+1)) {
-            if (!isBusy(x + 2, y + 2)) {
-                if (Objects.requireNonNull(findChekerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()){
-                    list.add(new Vector(Direction.UP_RIGHT, 2));
+            if (y != 7) {
+                if (isBusy(x - 1, y + 1)) {
+                    if (isNotLastChecker(x - 1, y + 1)) {
+                        if (!isBusy(x - 2, y + 2)) {
+                            if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()) {
+                                list.add(new Vector(Direction.UP_LEFT, 2));
+                            }
+                        }
+                    }
+                } else {
+                    list.add(new Vector(Direction.UP_LEFT, 1));
                 }
             }
-        } else {
-            list.add(new Vector(Direction.UP_RIGHT, 1));
         }
-
-
-        if (isBusy(x - 1, y + 1) && !isLastChecker(x-1, y+1)) {
-            if (!isBusy(x - 2, y + 2)) {
-                if (Objects.requireNonNull(findChekerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()){
-                    list.add(new Vector(Direction.UP_LEFT, 2));
+        if (x != 7) {
+            if (y != 7) {
+                if (isBusy(x + 1, y + 1)) {//аналогично на все 4 диагонали
+                    if (isNotLastChecker(x + 1, y + 1)) {
+                        if (!isBusy(x + 2, y + 2)) {
+                            if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()) {
+                                list.add(new Vector(Direction.UP_RIGHT, 2));
+                            }
+                        }
+                    }
+                } else {
+                    list.add(new Vector(Direction.UP_RIGHT, 1));
                 }
             }
-        } else {
-            list.add(new Vector(Direction.UP_LEFT, 1));
-        }
-
-        if (isBusy(x - 1, y - 1) && !isLastChecker(x - 1, y - 1)) {
-            if (!isBusy(x - 2, y - 2)) {
-                if (Objects.requireNonNull(findChekerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()){
-                    list.add(new Vector(Direction.DOWN_LEFT, 2));
+            if (y != 0) {
+                if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
+                    if (isNotLastChecker(x + 1, y - 1)) {
+                        if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
+                            if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
+                                list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+                            }
+                        }
+                    }
+                } else {
+                    list.add(new Vector(Direction.DOWN_RIGHT, 1));//просто ходим на 1 клетку
                 }
             }
-        } else {
-            list.add(new Vector(Direction.DOWN_LEFT, 1));
         }
-
         return list;
     }
 
-    private boolean isBusy(int checkerX, int checkerY) {
+    private boolean isBusy(int checkerX, int checkerY) {//если клетка по данным координатом занята другой шашкой
         for (Checker checker : checkerList) {
             if (checker.getX() == checkerX && checker.getY() == checkerY) {
                 return true;
@@ -226,9 +240,10 @@ public class Table implements LaunchpadReceiver {
         }
         return false;
     }
-    private Checker findChekerByCoordinates(int x, int y){
-        for(Checker checker : checkerList){
-            if (checker.getX() == x && checker.getY() == y){
+
+    private Checker findCheckerByCoordinates(int x, int y) {//находим объект шашки по координатам
+        for (Checker checker : checkerList) {
+            if (checker.getX() == x && checker.getY() == y) {
                 return checker;
             }
         }

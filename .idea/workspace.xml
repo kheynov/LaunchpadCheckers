@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="2901c666-38c0-4983-8f42-b96dde883b4c" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Checker.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Checker.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Drawer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Drawer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Handler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Handler.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Drawer.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Handler.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Table.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Table.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
@@ -36,11 +33,12 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Table.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1045">
-              <caret line="210" column="62" selection-start-line="210" selection-start-column="62" selection-end-line="210" selection-end-column="62" />
+            <state relative-caret-position="106">
+              <caret line="225" column="21" selection-start-line="225" selection-start-column="21" selection-end-line="225" selection-end-column="21" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#4978#4979#0" expanded="true" />
+                <element signature="class#Vector#0;class#Table#0" />
+                <element signature="e#5052#5053#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -49,11 +47,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Checker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="43" selection-start-line="43" selection-end-line="43" />
+            <state relative-caret-position="162">
+              <caret line="39" selection-start-line="39" selection-end-line="39" />
               <folding>
-                <element signature="e#1038#1039#0" expanded="true" />
                 <element signature="e#1062#1063#0" expanded="true" />
+                <element signature="e#1080#1081#0" expanded="true" />
                 <element signature="e#1104#1105#0" expanded="true" />
               </folding>
             </state>
@@ -190,7 +188,7 @@
     <frame x="0" y="-1" width="1920" height="1052" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.16809422" />
+      <window_info content_ui="combo" id="Project" order="0" weight="0.16809422" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Image Layers" order="2" />
       <window_info id="Designer" order="3" />
@@ -200,12 +198,12 @@
       <window_info id="Repositories" order="7" visible="true" weight="0.1964668" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32922733" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.18924972" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.1075028" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.37737963" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.3807391" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.075027995" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32922733" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32922733" />
@@ -399,11 +397,11 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Checker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="43" selection-start-line="43" selection-end-line="43" />
+        <state relative-caret-position="162">
+          <caret line="39" selection-start-line="39" selection-end-line="39" />
           <folding>
-            <element signature="e#1038#1039#0" expanded="true" />
             <element signature="e#1062#1063#0" expanded="true" />
+            <element signature="e#1080#1081#0" expanded="true" />
             <element signature="e#1104#1105#0" expanded="true" />
           </folding>
         </state>
@@ -411,11 +409,12 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/Table.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1045">
-          <caret line="210" column="62" selection-start-line="210" selection-start-column="62" selection-end-line="210" selection-end-column="62" />
+        <state relative-caret-position="106">
+          <caret line="225" column="21" selection-start-line="225" selection-start-column="21" selection-end-line="225" selection-end-column="21" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#4978#4979#0" expanded="true" />
+            <element signature="class#Vector#0;class#Table#0" />
+            <element signature="e#5052#5053#0" expanded="true" />
           </folding>
         </state>
       </provider>
