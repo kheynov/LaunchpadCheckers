@@ -31,14 +31,15 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Table.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="244">
-              <caret line="259" column="25" selection-start-line="259" selection-start-column="25" selection-end-line="259" selection-end-column="25" />
+            <state relative-caret-position="234">
+              <caret line="240" column="96" selection-start-line="240" selection-start-column="96" selection-end-line="240" selection-end-column="96" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#909#910#0" expanded="true" />
                 <element signature="e#949#950#0" expanded="true" />
                 <element signature="e#983#984#0" expanded="true" />
                 <element signature="e#1020#1021#0" expanded="true" />
+                <element signature="e#11577#11578#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -47,7 +48,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/Checker.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="460">
+            <state relative-caret-position="186">
               <caret line="39" selection-start-line="39" selection-end-line="39" />
               <folding>
                 <element signature="e#1062#1063#0" expanded="true" />
@@ -199,12 +200,12 @@
       <window_info id="Repositories" order="7" visible="true" weight="0.1964668" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.32922733" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.19036955" />
-      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.3068309" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.16797313" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.38969764" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
-      <window_info anchor="bottom" id="Terminal" order="7" weight="0.13213886" />
+      <window_info anchor="bottom" id="Terminal" order="7" weight="0.09294513" />
       <window_info anchor="bottom" id="Event Log" order="8" side_tool="true" />
       <window_info anchor="bottom" id="Version Control" order="9" weight="0.32922733" />
       <window_info anchor="bottom" id="Messages" order="10" weight="0.32922733" />
@@ -290,6 +291,18 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="[edit] рот уже не в говне(нет)" />
     <option name="LAST_COMMIT_MESSAGE" value="[edit] рот уже не в говне(нет)" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Table.java</url>
+          <line>259</line>
+          <properties />
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
     <entry file="file://$PROJECT_DIR$/src/Move.java" />
@@ -391,9 +404,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/Main.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="338">
+          <caret line="15" selection-start-line="15" selection-end-line="15" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Checker.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
+        <state relative-caret-position="186">
           <caret line="39" selection-start-line="39" selection-end-line="39" />
           <folding>
             <element signature="e#1062#1063#0" expanded="true" />
@@ -403,23 +423,17 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/Main.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="338">
-          <caret line="15" selection-start-line="15" selection-end-line="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/Table.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="244">
-          <caret line="259" column="25" selection-start-line="259" selection-start-column="25" selection-end-line="259" selection-end-column="25" />
+        <state relative-caret-position="234">
+          <caret line="240" column="96" selection-start-line="240" selection-start-column="96" selection-end-line="240" selection-end-column="96" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#909#910#0" expanded="true" />
             <element signature="e#949#950#0" expanded="true" />
             <element signature="e#983#984#0" expanded="true" />
             <element signature="e#1020#1021#0" expanded="true" />
+            <element signature="e#11577#11578#0" expanded="true" />
           </folding>
         </state>
       </provider>

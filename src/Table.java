@@ -7,7 +7,6 @@ import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class Table implements LaunchpadReceiver {
 
@@ -238,7 +237,9 @@ public class Table implements LaunchpadReceiver {
             int x = availableMove.getX(checker.getX());
             int y = availableMove.getY(checker.getY());
             try {
-                launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
+                if (isMapContains(x,y)){
+                    launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
+                }
             } catch (InvalidMidiDataException e) {
                 e.printStackTrace();
             }
@@ -254,9 +255,10 @@ public class Table implements LaunchpadReceiver {
                 if (isBusy(x - 1, y - 1)) {
                     if (isNotLastChecker(x - 1, y - 1)) {
                         if (!isBusy(x - 2, y - 2)) {
-
-                            if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {
-                                list.add(new Vector(Direction.DOWN_LEFT, 2));
+                            if (findCheckerByCoordinates(x - 1, y - 1) != null) {
+                                if (findCheckerByCoordinates(x - 1, y - 1).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.DOWN_LEFT, 2));
+                                }
                             }
                         }
 
@@ -273,8 +275,10 @@ public class Table implements LaunchpadReceiver {
                 if (isBusy(x - 1, y + 1)) {
                     if (isNotLastChecker(x - 1, y + 1)) {
                         if (!isBusy(x - 2, y + 2)) {
-                            if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()) {
-                                list.add(new Vector(Direction.UP_LEFT, 2));
+                            if (findCheckerByCoordinates(x - 1, y + 1) != null) {
+                                if (findCheckerByCoordinates(x - 1, y + 1).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.UP_LEFT, 2));
+                                }
                             }
                         }
                     }
@@ -290,8 +294,10 @@ public class Table implements LaunchpadReceiver {
                 if (isBusy(x + 1, y + 1)) {//аналогично на все 4 диагонали
                     if (isNotLastChecker(x + 1, y + 1)) {
                         if (!isBusy(x + 2, y + 2)) {
-                            if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()) {
-                                list.add(new Vector(Direction.UP_RIGHT, 2));
+                            if (findCheckerByCoordinates(x + 1, y + 1) != null) {
+                                if (findCheckerByCoordinates(x + 1, y + 1).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.UP_RIGHT, 2));
+                                }
                             }
                         }
                     }
@@ -307,8 +313,10 @@ public class Table implements LaunchpadReceiver {
             if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
                 if (isNotLastChecker(x + 1, y - 1)) {
                     if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
-                        if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
-                            list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+                        if (findCheckerByCoordinates(x + 1, y - 1) != null) {
+                            if (findCheckerByCoordinates(x + 1, y - 1).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
+                                list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+                            }
                         }
                     }
                 }
@@ -328,6 +336,10 @@ public class Table implements LaunchpadReceiver {
             }
         }
         return false;
+    }
+
+    private boolean isMapContains(int x, int y) {
+        return x >= 0 && x <= 7 && y >= 0 && y <= 7;
     }
 
     private Checker findCheckerByCoordinates(int x, int y) {//находим объект шашки по координатам
