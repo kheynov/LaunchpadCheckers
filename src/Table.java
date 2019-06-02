@@ -19,9 +19,17 @@ public class Table implements LaunchpadReceiver {
 
     Table() throws MidiUnavailableException {
         this.launchpad = new Launchpad(this);
-
         clearDisplay();
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        animateFlush(Color.R2G1);
+        clearDisplay();
+
         generateStartMap();
+
         redraw();
     }
 
@@ -71,15 +79,34 @@ public class Table implements LaunchpadReceiver {
             }
         }
         if (checkWinner()) {
-            restartGame();
+            closeGame();
         }
     }
 
-    private void restartGame() {
-        clearCheckers();
+    private void closeGame() {
         clearDisplay();
-        clearAvailableMoves();
-//        generateStartMap();
+        animateFlush(getWinnerColor());
+//        clearCheckers();
+//        clearAvailableMoves();
+    }
+
+    private void animateFlush(Color color) {
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 8; j++) {
+                try {
+                    launchpad.set(Pad.find(i, 7-j), color);
+                    launchpad.set(Pad.find(7-i, j), color);
+                    Thread.sleep(30);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        try {
+            Thread.sleep(250);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     private void clearDisplay() {
@@ -95,7 +122,6 @@ public class Table implements LaunchpadReceiver {
     }
 
     private void clearAvailableMoves() {
-
         for (int i = 0; i < availableMoves.size(); i++) {
             Vector vector = availableMoves.get(i);
             availableMoves.remove(vector);
@@ -122,7 +148,24 @@ public class Table implements LaunchpadReceiver {
         } else {
             return false;
         }
-
+    }
+    private Color getWinnerColor(){
+        int whites = 0;
+        int blacks = 0;
+        for (Checker checker : checkerList) {
+            if (checker.getColor() == Color.RED) {
+                blacks++;
+            } else {
+                whites++;
+            }
+        }
+        if (blacks==0){
+            return Color.GREEN;
+        }else if(whites == 0){
+            return Color.RED;
+        }else{
+            return Color.AMBER;
+        }
     }
 
     private void redraw() {
@@ -150,7 +193,6 @@ public class Table implements LaunchpadReceiver {
                 checkerList.add(new Checker(i - 1, 6, Color.RED));
             } else {
                 checkerList.add(new Checker(i - 1, 5, Color.RED));
-
                 checkerList.add(new Checker(i - 1, 7, Color.RED));
             }
         }
@@ -237,7 +279,7 @@ public class Table implements LaunchpadReceiver {
             int x = availableMove.getX(checker.getX());
             int y = availableMove.getY(checker.getY());
             try {
-                if (isMapContains(x,y)){
+                if (isMapContains(x, y)) {
                     launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
                 }
             } catch (InvalidMidiDataException e) {
@@ -261,14 +303,12 @@ public class Table implements LaunchpadReceiver {
                                 }
                             }
                         }
-
                     }
                 } else {
                     if (checker.getColor() == Color.RED) {
                         list.add(new Vector(Direction.DOWN_LEFT, 1));
                     }
                 }
-
             }
             if (y != 7) {
 
@@ -306,7 +346,6 @@ public class Table implements LaunchpadReceiver {
                         list.add(new Vector(Direction.UP_RIGHT, 1));
                     }
                 }
-
             }
         }
         if (y != 0) {
@@ -350,5 +389,4 @@ public class Table implements LaunchpadReceiver {
         }
         return null;
     }
-
 }
