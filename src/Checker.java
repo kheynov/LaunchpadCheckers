@@ -19,19 +19,19 @@ class Checker {
         switch (dir.getDirection()) {
             case UP_LEFT:
                 this.x -= dir.getLength();
-                this.y -= dir.getLength();
+                this.y += dir.getLength();
                 break;
             case UP_RIGHT:
                 this.x += dir.getLength();
-                this.y -= dir.getLength();
+                this.y += dir.getLength();
                 break;
             case DOWN_LEFT:
                 this.x -= dir.getLength();
-                this.y += dir.getLength();
+                this.y -= dir.getLength();
                 break;
             case DOWN_RIGHT:
                 this.x += dir.getLength();
-                this.y += dir.getLength();
+                this.y -= dir.getLength();
                 break;
         }
     }

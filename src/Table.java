@@ -15,18 +15,12 @@ public class Table implements LaunchpadReceiver {
     private ArrayList<Checker> checkerList = new ArrayList<>();
     private ArrayList<Vector> availableMoves = new ArrayList<>();
     private Checker lastClickedChecker;
-    private boolean isCheckerWasClicked = false;
+    private boolean isReadyToStep = false;
+    private boolean isWhiteTurn = true;
 
     Table() throws MidiUnavailableException {
         this.launchpad = new Launchpad(this);
-//        checkerList.add(new Checker(1, 1, Color.RED));
-//        checkerList.add(new Checker(0, 0, Color.GREEN));
-//
-//        checkerList.add(new Checker(5, 4, Color.GREEN));
-        /*checkerList.add(new Checker(4, 3, Color.GREEN));
-        checkerList.add(new Checker(6, 3, Color.GREEN));
-        checkerList.add(new Checker(6, 5, Color.GREEN));
-        checkerList.add(new Checker(4, 5, Color.GREEN));*/
+
         clearDisplay();
         generateStartMap();
         redraw();
@@ -35,26 +29,63 @@ public class Table implements LaunchpadReceiver {
     @Override
     public void receive(Pad pad) {
         redraw();
-        if (isCheckerWasClicked) {
+        if (isReadyToStep) {
+            isReadyToStep = false;
+            for (Vector vector : availableMoves) {
+                if (vector != null && lastClickedChecker != null) {
+                    if (vector.getX(lastClickedChecker.getX()) == pad.getX() && vector.getY(lastClickedChecker.getY()) == pad.getY()) {
+                        if (vector.getLength() == 2) {
+                            Vector tmpVector = new Vector(vector.getDirection(), 1);
+                            checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),
+                                    tmpVector.getY(lastClickedChecker.getY())));
+                        }
+                        lastClickedChecker.move(vector);
+                        isWhiteTurn = !isWhiteTurn;
+                        redraw();
+                        lastClickedChecker = null;
+                        break;
+                    }
+                }
+            }
             clearAvailableMoves();
             redraw();
-            isCheckerWasClicked = false;
             //обработка хода
         } else {
-            isCheckerWasClicked = true;
+            isReadyToStep = true;
             for (Checker checker : checkerList) {
                 if (checker.getX() == pad.getX() && checker.getY() == pad.getY()) {
-                    redraw();
-                    lastClickedChecker = checker;
-                    showAvailableMoves(checker);
-                    System.out.println("Redrawing");
+                    if (isWhiteTurn) {
+                        if (checker.getColor() == Color.GREEN) {
+                            redraw();
+                            lastClickedChecker = checker;
+                            showAvailableMoves(checker);
+
+                        }
+                    } else {
+                        if (checker.getColor() == Color.RED) {
+                            redraw();
+                            lastClickedChecker = checker;
+                            showAvailableMoves(checker);
+                        }
+                    }
                 }
             }
         }
+        if (checkWinner()){
+            restartGame();
+        }
+    }
+
+    private void restartGame(){
+        clearCheckers();
+        clearDisplay();
+        clearAvailableMoves();
+//        generateStartMap();
     }
 
     private void clearDisplay() {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 8; i++)
+        {
             for (int j = 0; j < 8; j++) {
                 try {
                     launchpad.set(Pad.find(i, j), Color.BLANK);
@@ -66,9 +97,33 @@ public class Table implements LaunchpadReceiver {
     }
 
     private void clearAvailableMoves() {
-        for (Vector vector : availableMoves) {
+
+        for (int i = 0; i < availableMoves.size(); i++) {
+            Vector vector = availableMoves.get(i);
             availableMoves.remove(vector);
         }
+    }
+    private boolean checkWinner(){
+        int whites = 0;
+        int blacks = 0;
+        for (Checker checker : checkerList) {
+            if (checker.getColor() == Color.RED) {
+                blacks++;
+            } else {
+                whites++;
+            }
+        }
+        System.out.println("G: " + whites + " R: "+ blacks);
+        if (blacks==0){
+            System.out.println("Победили зелёные");
+            return true;
+        }else if (whites == 0){
+            System.out.println("Победили красные");
+            return true;
+        }else {
+            return false;
+        }
+
     }
 
     private void redraw() {
@@ -85,19 +140,25 @@ public class Table implements LaunchpadReceiver {
     private void generateStartMap() {
         for (int i = 1; i <= 8; i++) {
             if (i % 2 == 0) {
-                checkerList.add(new Checker(i-1, 1, Color.GREEN));
+                checkerList.add(new Checker(i - 1, 1, Color.GREEN));
             } else {
-                checkerList.add(new Checker(i-1, 0, Color.GREEN));
-                checkerList.add(new Checker(i-1, 2, Color.GREEN));
+                checkerList.add(new Checker(i - 1, 0, Color.GREEN));
+                checkerList.add(new Checker(i - 1, 2, Color.GREEN));
             }
         }
         for (int i = 1; i <= 8; i++) {
-            if (i%2!=0){
-                checkerList.add(new Checker(i-1, 6, Color.RED));
-            }else {
-                checkerList.add(new Checker(i-1, 5, Color.RED));
-                checkerList.add(new Checker(i-1, 7, Color.RED));
+            if (i % 2 != 0) {
+                checkerList.add(new Checker(i - 1, 6, Color.RED));
+            } else {
+                checkerList.add(new Checker(i - 1, 5, Color.RED));
+
+                checkerList.add(new Checker(i - 1, 7, Color.RED));
             }
+        }
+    }
+    private void clearCheckers(){
+        for (int i = 0; i < checkerList.size(); i++) {
+            checkerList.remove(checkerList.get(i));
         }
     }
 
@@ -162,7 +223,6 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-
     private boolean isNotLastChecker(int x, int y) {//если это не крайняя клетка поля
         if (x == 0 || x == 7 || y == 0 || y == 7) {
             return false;
@@ -172,21 +232,16 @@ public class Table implements LaunchpadReceiver {
     }
 
     private void showAvailableMoves(Checker checker) {
-        System.out.println(checkerList);
-        List<Vector> availableMoves = availableMoves(checker);
-        for (int i = 0; i < availableMoves.size(); i++) {
-            int x = availableMoves.get(i).getX(checker.getX());
-            int y = availableMoves.get(i).getY(checker.getY());
+        availableMoves = (ArrayList<Vector>) availableMoves(checker);
+        for (Vector availableMove : availableMoves) {
+            int x = availableMove.getX(checker.getX());
+            int y = availableMove.getY(checker.getY());
             try {
                 launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
             } catch (InvalidMidiDataException e) {
                 e.printStackTrace();
             }
         }
-    }
-
-    void deleteChecker(Checker checker) {
-        checkerList.remove(checker);
     }
 
     private List<Vector> availableMoves(Checker checker) {
@@ -269,6 +324,5 @@ public class Table implements LaunchpadReceiver {
         }
         return null;
     }
-
 
 }
