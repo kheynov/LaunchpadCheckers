@@ -6,7 +6,8 @@ import org.rjung.util.launchpad.Pad;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 
-public class Handler implements LaunchpadReceiver {
+public class Handler /*implements LaunchpadReceiver*/ {
+/*
 
     private Table table;
     private Launchpad launchpad;
@@ -35,5 +36,6 @@ public class Handler implements LaunchpadReceiver {
             e.printStackTrace();
         }
     }
+*/
 
 }

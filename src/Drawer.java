@@ -1,14 +1,5 @@
-import javafx.scene.control.Tab;
-import org.rjung.util.launchpad.Color;
-import org.rjung.util.launchpad.Launchpad;
-import org.rjung.util.launchpad.Pad;
-
-import javax.sound.midi.InvalidMidiDataException;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Drawer {
-
+/*
     private Table table;
     private Launchpad launchpad;
     private Checker isDrawingAvailableMovesChecker;
@@ -52,6 +43,6 @@ public class Drawer {
                 launchpad.set(Pad.find(i, j), Color.BLANK);
             }
         }
-    }
+    }*/
 
 }

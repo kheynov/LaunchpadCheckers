@@ -15,29 +15,25 @@ class Checker {
         return color;
     }
 
-    public Checker move(Table.Vector dir) {
-        Checker check = new Checker(this.x, this.y, this.color);;
-
+    public void move(Table.Vector dir) {
         switch (dir.getDirection()) {
             case UP_LEFT:
-                check.x -= dir.getLength();
-                check.y -= dir.getLength();
+                this.x -= dir.getLength();
+                this.y -= dir.getLength();
                 break;
             case UP_RIGHT:
-                check.x += dir.getLength();
-                check.y -= dir.getLength();
+                this.x += dir.getLength();
+                this.y -= dir.getLength();
                 break;
             case DOWN_LEFT:
-                check.x -= dir.getLength();
-                check.y += dir.getLength();
+                this.x -= dir.getLength();
+                this.y += dir.getLength();
                 break;
             case DOWN_RIGHT:
-                check.x += dir.getLength();
-                check.y += dir.getLength();
+                this.x += dir.getLength();
+                this.y += dir.getLength();
                 break;
         }
-
-        return check;
     }
 
     int getX() {
