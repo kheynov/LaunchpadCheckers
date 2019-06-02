@@ -71,12 +71,12 @@ public class Table implements LaunchpadReceiver {
                 }
             }
         }
-        if (checkWinner()){
+        if (checkWinner()) {
             restartGame();
         }
     }
 
-    private void restartGame(){
+    private void restartGame() {
         clearCheckers();
         clearDisplay();
         clearAvailableMoves();
@@ -84,8 +84,7 @@ public class Table implements LaunchpadReceiver {
     }
 
     private void clearDisplay() {
-        for (int i = 0; i < 8; i++)
-        {
+        for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
                 try {
                     launchpad.set(Pad.find(i, j), Color.BLANK);
@@ -103,7 +102,8 @@ public class Table implements LaunchpadReceiver {
             availableMoves.remove(vector);
         }
     }
-    private boolean checkWinner(){
+
+    private boolean checkWinner() {
         int whites = 0;
         int blacks = 0;
         for (Checker checker : checkerList) {
@@ -113,14 +113,14 @@ public class Table implements LaunchpadReceiver {
                 whites++;
             }
         }
-        System.out.println("G: " + whites + " R: "+ blacks);
-        if (blacks==0){
+        System.out.println("G: " + whites + " R: " + blacks);
+        if (blacks == 0) {
             System.out.println("Победили зелёные");
             return true;
-        }else if (whites == 0){
+        } else if (whites == 0) {
             System.out.println("Победили красные");
             return true;
-        }else {
+        } else {
             return false;
         }
 
@@ -156,7 +156,8 @@ public class Table implements LaunchpadReceiver {
             }
         }
     }
-    private void clearCheckers(){
+
+    private void clearCheckers() {
         for (int i = 0; i < checkerList.size(); i++) {
             checkerList.remove(checkerList.get(i));
         }
@@ -253,16 +254,22 @@ public class Table implements LaunchpadReceiver {
                 if (isBusy(x - 1, y - 1)) {
                     if (isNotLastChecker(x - 1, y - 1)) {
                         if (!isBusy(x - 2, y - 2)) {
+
                             if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {
                                 list.add(new Vector(Direction.DOWN_LEFT, 2));
                             }
                         }
+
                     }
                 } else {
-                    list.add(new Vector(Direction.DOWN_LEFT, 1));
+                    if (checker.getColor() == Color.RED) {
+                        list.add(new Vector(Direction.DOWN_LEFT, 1));
+                    }
                 }
+
             }
             if (y != 7) {
+
                 if (isBusy(x - 1, y + 1)) {
                     if (isNotLastChecker(x - 1, y + 1)) {
                         if (!isBusy(x - 2, y + 2)) {
@@ -272,7 +279,9 @@ public class Table implements LaunchpadReceiver {
                         }
                     }
                 } else {
-                    list.add(new Vector(Direction.UP_LEFT, 1));
+                    if (checker.getColor() == Color.GREEN) {
+                        list.add(new Vector(Direction.UP_LEFT, 1));
+                    }
                 }
             }
         }
@@ -287,19 +296,24 @@ public class Table implements LaunchpadReceiver {
                         }
                     }
                 } else {
-                    list.add(new Vector(Direction.UP_RIGHT, 1));
+                    if (checker.getColor() == Color.GREEN) {
+                        list.add(new Vector(Direction.UP_RIGHT, 1));
+                    }
                 }
+
             }
-            if (y != 0) {
-                if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
-                    if (isNotLastChecker(x + 1, y - 1)) {
-                        if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
-                            if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
-                                list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
-                            }
+        }
+        if (y != 0) {
+            if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
+                if (isNotLastChecker(x + 1, y - 1)) {
+                    if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
+                        if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
+                            list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
                         }
                     }
-                } else {
+                }
+            } else {
+                if (checker.getColor() == Color.RED) {
                     list.add(new Vector(Direction.DOWN_RIGHT, 1));//просто ходим на 1 клетку
                 }
             }
