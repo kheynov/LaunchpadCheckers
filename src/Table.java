@@ -17,6 +17,21 @@ public class Table implements LaunchpadReceiver {
     private Checker lastClickedChecker;
     private boolean isCheckerWasClicked = false;
 
+    Table() throws MidiUnavailableException {
+        this.launchpad = new Launchpad(this);
+//        checkerList.add(new Checker(1, 1, Color.RED));
+//        checkerList.add(new Checker(0, 0, Color.GREEN));
+//
+//        checkerList.add(new Checker(5, 4, Color.GREEN));
+        /*checkerList.add(new Checker(4, 3, Color.GREEN));
+        checkerList.add(new Checker(6, 3, Color.GREEN));
+        checkerList.add(new Checker(6, 5, Color.GREEN));
+        checkerList.add(new Checker(4, 5, Color.GREEN));*/
+        clearDisplay();
+        generateStartMap();
+        redraw();
+    }
+
     @Override
     public void receive(Pad pad) {
         redraw();
@@ -67,18 +82,23 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    Table() throws MidiUnavailableException {
-        this.launchpad = new Launchpad(this);
-        checkerList.add(new Checker(1, 1, Color.RED));
-        checkerList.add(new Checker(0, 0, Color.GREEN));
-
-        checkerList.add(new Checker(5, 4, Color.GREEN));
-        /*checkerList.add(new Checker(4, 3, Color.GREEN));
-        checkerList.add(new Checker(6, 3, Color.GREEN));
-        checkerList.add(new Checker(6, 5, Color.GREEN));
-        checkerList.add(new Checker(4, 5, Color.GREEN));*/
-        clearDisplay();
-        redraw();
+    private void generateStartMap() {
+        for (int i = 1; i <= 8; i++) {
+            if (i % 2 == 0) {
+                checkerList.add(new Checker(i-1, 1, Color.GREEN));
+            } else {
+                checkerList.add(new Checker(i-1, 0, Color.GREEN));
+                checkerList.add(new Checker(i-1, 2, Color.GREEN));
+            }
+        }
+        for (int i = 1; i <= 8; i++) {
+            if (i%2!=0){
+                checkerList.add(new Checker(i-1, 6, Color.RED));
+            }else {
+                checkerList.add(new Checker(i-1, 5, Color.RED));
+                checkerList.add(new Checker(i-1, 7, Color.RED));
+            }
+        }
     }
 
     public enum Direction {
