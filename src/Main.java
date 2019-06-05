@@ -1,8 +1,6 @@
-import org.rjung.util.launchpad.Color;
-
 public class Main implements Runnable {
 
-    boolean isRunning = true;
+    private boolean isRunning = true;
 
     public static void main(String[] args) {
         new Main().run();
@@ -12,8 +10,7 @@ public class Main implements Runnable {
     public void run() {
 
         try {
-            Table table = new Table();
-
+            new Table();
             while (isRunning) {
                 Thread.sleep(23);
             }

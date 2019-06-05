@@ -4,6 +4,7 @@ class Checker {
 
     private Color color;
     private int x, y;
+    boolean isQueen = false;
 
     Checker(int x, int y, Color color) {
         this.x = x;
@@ -11,11 +12,15 @@ class Checker {
         this.color = color;
     }
 
-    public Color getColor() {
+    Color getColor() {
         return color;
     }
 
-    public void move(Table.Vector dir) {
+    void setQueen(){
+        this.isQueen=true;
+    }
+
+    void move(Vector dir) {
         switch (dir.getDirection()) {
             case UP_LEFT:
                 this.x -= dir.getLength();
@@ -35,13 +40,10 @@ class Checker {
                 break;
         }
     }
-
     int getX() {
         return x;
     }
-
     int getY() {
         return y;
     }
-
 }
