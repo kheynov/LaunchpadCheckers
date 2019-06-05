@@ -32,8 +32,8 @@ public class Table implements LaunchpadReceiver {
         animateFlush(Color.AMBER);
         clearDisplay();
 
-        generateStartMap();
-//        generateTestMap();
+//        generateStartMap();
+        generateTestMap();
         redraw();
     }
 
@@ -48,14 +48,14 @@ public class Table implements LaunchpadReceiver {
 
                     if (vector.getX(lastClickedChecker.getX()) == pad.getX() && vector.getY(lastClickedChecker.getY()) == pad.getY()) {
 
-                        if (vector.getLength() == 2) {
-                            Vector tmpVector = new Vector(vector.getDirection(), 1);
+                        if (vector.getLength() > 1) {
+                            Vector tmpVector = new Vector(vector.getDirection(), vector.getLength()-1);
                             checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),
                                     tmpVector.getY(lastClickedChecker.getY())));
                         }
 
                         lastClickedChecker.move(vector);
-                        if (isBecomeQueen(lastClickedChecker)){
+                        if (isBecomeQueen(lastClickedChecker)) {
                             lastClickedChecker.setQueen();
                         }
                         isWhiteTurn = !isWhiteTurn;
@@ -103,12 +103,13 @@ public class Table implements LaunchpadReceiver {
 //        clearCheckers();
 //        clearAvailableMoves();
     }
-    private boolean isBecomeQueen(Checker checker){
-        if (checker.getColor() == Color.RED && checker.getY()==0){
+
+    private boolean isBecomeQueen(Checker checker) {
+        if (checker.getColor() == Color.RED && checker.getY() == 0) {
             return true;
-        }else if (checker.getColor() == Color.GREEN && checker.getY() == 7){
+        } else if (checker.getColor() == Color.GREEN && checker.getY() == 7) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -209,13 +210,13 @@ public class Table implements LaunchpadReceiver {
         System.out.println("Redraw");
         for (Checker checker : checkerList) {
             try {
-                if (checker.isQueen){
-                    if (checker.getColor()==Color.RED){
+                if (checker.isQueen) {
+                    if (checker.getColor() == Color.RED) {
                         launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R2G1);
-                    }else {
+                    } else {
                         launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R1G2);
                     }
-                }else{
+                } else {
                     launchpad.set(Pad.find(checker.getX(), checker.getY()), checker.getColor());
                 }
             } catch (InvalidMidiDataException e) {
@@ -224,13 +225,21 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    private void generateTestMap(){
-        checkerList.add(new Checker(1, 1, Color.RED));
-        checkerList.add(new Checker(5, 3, Color.GREEN));
+    private void generateTestMap() {
+
+        Checker red_checker = new Checker(1, 1, Color.RED);
+        red_checker.isQueen=true;
+
+        Checker green_checker = new Checker(5, 3, Color.GREEN);
+
+        checkerList.add(red_checker);
+        checkerList.add(green_checker);
     }
+
     private void generateStartMap() {
         for (int i = 1; i <= 8; i++) {
             if (i % 2 == 0) {
+
                 checkerList.add(new Checker(i - 1, 1, Color.GREEN));
             } else {
                 checkerList.add(new Checker(i - 1, 0, Color.GREEN));
@@ -306,18 +315,19 @@ public class Table implements LaunchpadReceiver {
                     }
                 } else {
                     int i = checker.getX(), j = checker.getY();
-                    while (i != 0 || j != 0) {
-
-                        if (!isBusy(i, j) && isMapContains(i, j)) {
-                            list.add(new Vector(Direction.DOWN_LEFT, i));
+                    int iter = 1;
+                    while (i >= 0 && j >= 0) {
+                        if (!isBusy(i-1, j-1) && isMapContains(i-1, j-1)) {
+                            list.add(new Vector(Direction.DOWN_LEFT, iter));
                         } else if (isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {
-                            if (findCheckerByCoordinates(x - 1, y - 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {
-                                    list.add(new Vector(Direction.DOWN_LEFT, i + 2));
+                            if (findCheckerByCoordinates(i - 1, j - 1) != null) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.DOWN_LEFT, iter + 1));
+                                    break;
                                 }
                             }
                         }
-
+                        iter++;
                         i--;
                         j--;
 
@@ -344,16 +354,19 @@ public class Table implements LaunchpadReceiver {
                     }
                 } else {
                     int i = checker.getX(), j = checker.getY();
-                    while (i != 0 || j < 8) {
-                        if (!isBusy(i, j) && isMapContains(i, j)) {
-                            list.add(new Vector(Direction.UP_LEFT, i));
+                    int iter = 1;
+                    while (i >= 0 && j < 8) {
+                        if (!isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
+                            list.add(new Vector(Direction.UP_LEFT, iter));
                         } else if (isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
-                            if (findCheckerByCoordinates(x - 1, y + 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()) {
-                                    list.add(new Vector(Direction.UP_LEFT, i + 2));
+                            if (findCheckerByCoordinates(i - 1, j + 1) != null) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.UP_LEFT, iter + 1));
+                                    break;
                                 }
                             }
                         }
+                        iter++;
                         i--;
                         j++;
                     }
@@ -380,56 +393,60 @@ public class Table implements LaunchpadReceiver {
                     }
                 } else {
                     int i = checker.getX(), j = checker.getY();
-                    while (i < 8 || j < 8) {
-                        if (!isBusy(i, j) && isMapContains(i, j)) {
-                            list.add(new Vector(Direction.UP_RIGHT, i));
+                    int iter = 1;
+                    while (i < 8 && j < 8) {
+                        if (!isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
+                            list.add(new Vector(Direction.UP_RIGHT, iter));
                         } else if (isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
-                            if (findCheckerByCoordinates(x + 1, y + 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()) {
-                                    list.add(new Vector(Direction.UP_RIGHT, i + 2));
+                            if (findCheckerByCoordinates(i + 1, j + 1) != null) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.UP_RIGHT, iter + 1));
+                                    break;
                                 }
                             }
                         }
-
+                        iter++;
                         i++;
                         j++;
 
                     }
                 }
             }
-        }
-        if (y != 0) {
-            if (!checker.isQueen) {
-                if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
-                    if (isNotLastChecker(x + 1, y - 1)) {
-                        if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
-                            if (findCheckerByCoordinates(x + 1, y - 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
-                                    list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+            if (y != 0) {
+                if (!checker.isQueen) {
+                    if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
+                        if (isNotLastChecker(x + 1, y - 1)) {
+                            if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
+                                if (findCheckerByCoordinates(x + 1, y - 1) != null) {
+                                    if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
+                                        list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+                                    }
                                 }
                             }
                         }
-                    }
-                } else {
-                    if (checker.getColor() == Color.RED || checker.isQueen) {
-                        list.add(new Vector(Direction.DOWN_RIGHT, 1));//просто ходим на 1 клетку
-                    }
-                }
-            } else {
-                int i = checker.getX(), j = checker.getY();
-                while (i < 8 || j != 0) {
-                    if (!isBusy(i, j) && isMapContains(i, j)) {
-                        list.add(new Vector(Direction.DOWN_RIGHT, i));
-                    } else if (isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
-                        if (findCheckerByCoordinates(x + 1, y - 1) != null) {
-                            if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {
-                                list.add(new Vector(Direction.DOWN_RIGHT, i + 2));
-                            }
+                    } else {
+                        if (checker.getColor() == Color.RED || checker.isQueen) {
+                            list.add(new Vector(Direction.DOWN_RIGHT, 1));//просто ходим на 1 клетку
                         }
                     }
-                    i++;
-                    j--;
-
+                } else {
+                    int i = checker.getX(), j = checker.getY();
+                    int iter = 1;
+                    while (i < 8 && j >= 0) {
+                        if (!isBusy(i+1, j-1) && isMapContains(i+1, j-1)) {
+                            list.add(new Vector(Direction.DOWN_RIGHT, iter));
+                        } else if (isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
+                            if (findCheckerByCoordinates(i + 1, j - 1) != null) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor()) {
+                                    list.add(new Vector(Direction.DOWN_RIGHT, iter+1));
+                                    break;
+                                }
+                            }
+                        }
+                        iter++;
+                        i++;
+                        j--;
+                    }
                 }
             }
         }
@@ -459,6 +476,7 @@ public class Table implements LaunchpadReceiver {
         return null;
     }
 }
+
 class Vector {
     private Table.Direction direction;
     private int length;
