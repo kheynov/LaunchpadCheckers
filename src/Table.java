@@ -32,8 +32,8 @@ public class Table implements LaunchpadReceiver {
         animateFlush(Color.AMBER);
         clearDisplay();
 
-//        generateStartMap();
-        generateTestMap();
+        generateStartMap();
+//        generateTestMap();
         redraw();
     }
 
@@ -49,7 +49,7 @@ public class Table implements LaunchpadReceiver {
                     if (vector.getX(lastClickedChecker.getX()) == pad.getX() && vector.getY(lastClickedChecker.getY()) == pad.getY()) {
 
                         if (vector.getLength() > 1) {
-                            Vector tmpVector = new Vector(vector.getDirection(), vector.getLength()-1);
+                            Vector tmpVector = new Vector(vector.getDirection(), vector.getLength() - 1);
                             checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),
                                     tmpVector.getY(lastClickedChecker.getY())));
                         }
@@ -228,7 +228,7 @@ public class Table implements LaunchpadReceiver {
     private void generateTestMap() {
 
         Checker red_checker = new Checker(1, 1, Color.RED);
-        red_checker.isQueen=true;
+        red_checker.isQueen = true;
 
         Checker green_checker = new Checker(5, 3, Color.GREEN);
 
@@ -316,16 +316,22 @@ public class Table implements LaunchpadReceiver {
                 } else {
                     int i = checker.getX(), j = checker.getY();
                     int iter = 1;
+                    int blockCounter = 0;
                     while (i >= 0 && j >= 0) {
-                        if (!isBusy(i-1, j-1) && isMapContains(i-1, j-1)) {
+                        if (!isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {
                             list.add(new Vector(Direction.DOWN_LEFT, iter));
                         } else if (isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {
                             if (findCheckerByCoordinates(i - 1, j - 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor()) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor() && !isBusy(i - 2, j - 2)) {
                                     list.add(new Vector(Direction.DOWN_LEFT, iter + 1));
                                     break;
                                 }
                             }
+                        }else{
+                            blockCounter++;
+                        }
+                        if (blockCounter>=1){
+                            break;
                         }
                         iter++;
                         i--;
@@ -355,16 +361,22 @@ public class Table implements LaunchpadReceiver {
                 } else {
                     int i = checker.getX(), j = checker.getY();
                     int iter = 1;
+                    int blockCounter = 0;
                     while (i >= 0 && j < 8) {
                         if (!isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
                             list.add(new Vector(Direction.UP_LEFT, iter));
                         } else if (isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
                             if (findCheckerByCoordinates(i - 1, j + 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor()) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor() && !isBusy(i - 2, j + 2)) {
                                     list.add(new Vector(Direction.UP_LEFT, iter + 1));
                                     break;
                                 }
                             }
+                        }else{
+                            blockCounter++;
+                        }
+                        if (blockCounter>=1){
+                            break;
                         }
                         iter++;
                         i--;
@@ -394,16 +406,22 @@ public class Table implements LaunchpadReceiver {
                 } else {
                     int i = checker.getX(), j = checker.getY();
                     int iter = 1;
+                    int blockCounter = 0;
                     while (i < 8 && j < 8) {
                         if (!isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
                             list.add(new Vector(Direction.UP_RIGHT, iter));
                         } else if (isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
                             if (findCheckerByCoordinates(i + 1, j + 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor()) {
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor()&&!isBusy(i+2,j+2)) {
                                     list.add(new Vector(Direction.UP_RIGHT, iter + 1));
                                     break;
                                 }
                             }
+                        }else{
+                            blockCounter++;
+                        }
+                        if (blockCounter>=1){
+                            break;
                         }
                         iter++;
                         i++;
@@ -432,16 +450,22 @@ public class Table implements LaunchpadReceiver {
                 } else {
                     int i = checker.getX(), j = checker.getY();
                     int iter = 1;
+                    int blockCounter = 0;
                     while (i < 8 && j >= 0) {
-                        if (!isBusy(i+1, j-1) && isMapContains(i+1, j-1)) {
+                        if (!isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
                             list.add(new Vector(Direction.DOWN_RIGHT, iter));
                         } else if (isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
                             if (findCheckerByCoordinates(i + 1, j - 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor()) {
-                                    list.add(new Vector(Direction.DOWN_RIGHT, iter+1));
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor()&&!isBusy(i+2,j-2)) {
+                                    list.add(new Vector(Direction.DOWN_RIGHT, iter + 1));
                                     break;
                                 }
                             }
+                        }else{
+                            blockCounter++;
+                        }
+                        if (blockCounter>=1){
+                            break;
                         }
                         iter++;
                         i++;
