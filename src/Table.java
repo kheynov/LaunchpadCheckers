@@ -249,13 +249,6 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    public enum Direction {//все направления, в который мы можем походить
-        UP_LEFT,
-        UP_RIGHT,
-        DOWN_LEFT,
-        DOWN_RIGHT
-    }
-
     private boolean isNotLastChecker(int x, int y) {//если это не крайняя клетка поля
         return x != 0 && x != 7 && y != 0 && y != 7;
     }
@@ -300,14 +293,14 @@ public class Table implements LaunchpadReceiver {
                                 if (findCheckerByCoordinates(x - 1, y - 1) != null) {//удостоверяемся, что клетка которую мы рубим не null
 
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {//если это фишка соперника(другого цвета)
-                                        list.add(new Vector(Direction.DOWN_LEFT, 2));//то мы её рубим
+                                        list.add(new Vector(Vector.Direction.DOWN_LEFT, 2));//то мы её рубим
                                     }
                                 }
                             }
                         }
                     } else {//если клетка в которую мы ходим свободна, то мы просто ходим туда
                         if (checker.getColor() == Color.RED) {//если шашка красного цвета (ведь шашки назад ходить не могут, только рубить)
-                            list.add(new Vector(Direction.DOWN_LEFT, 1));
+                            list.add(new Vector(Vector.Direction.DOWN_LEFT, 1));
                         }
                     }
                 } else {// если шашка все-таки дамка
@@ -316,13 +309,13 @@ public class Table implements LaunchpadReceiver {
                     int blockCounter = 0;//счетчик заблокированных ходов
                     while (i >= 0 && j >= 0) {//пока мы не уперлись в стену
                         if (!isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {//если соседняя клетка не занята и она в пределах карты
-                            list.add(new Vector(Direction.DOWN_LEFT, iter));//ходим туда
+                            list.add(new Vector(Vector.Direction.DOWN_LEFT, iter));//ходим туда
                         } else if (isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {//если клетка все таки занята
 
                             if (findCheckerByCoordinates(i - 1, j - 1) != null) {//Если в этой клетке находится шашка
 
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor() && !isBusy(i - 2, j - 2)) {//если соседняя шашка другого цвета и следующая за ней свободна
-                                    list.add(new Vector(Direction.DOWN_LEFT, iter + 1));//ходим в следующую за ней(рубим)
+                                    list.add(new Vector(Vector.Direction.DOWN_LEFT, iter + 1));//ходим в следующую за ней(рубим)
                                     break;//и выходим из цикла, дальше мы идти не будем
                                 } else {
                                     blockCounter++;//если в той клетке было занятно, увеличиваем счетчик заблокированных ходов
@@ -354,14 +347,14 @@ public class Table implements LaunchpadReceiver {
                                 if (findCheckerByCoordinates(x - 1, y + 1) != null) {
 
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()) {
-                                        list.add(new Vector(Direction.UP_LEFT, 2));
+                                        list.add(new Vector(Vector.Direction.UP_LEFT, 2));
                                     }
                                 }
                             }
                         }
                     } else {
                         if (checker.getColor() == Color.GREEN) {
-                            list.add(new Vector(Direction.UP_LEFT, 1));
+                            list.add(new Vector(Vector.Direction.UP_LEFT, 1));
                         }
                     }
 
@@ -371,11 +364,11 @@ public class Table implements LaunchpadReceiver {
                     int blockCounter = 0;
                     while (i >= 0 && j < 8) {
                         if (!isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
-                            list.add(new Vector(Direction.UP_LEFT, iter));
+                            list.add(new Vector(Vector.Direction.UP_LEFT, iter));
                         } else if (isBusy(i - 1, j + 1) && isMapContains(i - 1, j + 1)) {
                             if (findCheckerByCoordinates(i - 1, j + 1) != null) {
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor() && !isBusy(i - 2, j + 2)) {
-                                    list.add(new Vector(Direction.UP_LEFT, iter + 1));
+                                    list.add(new Vector(Vector.Direction.UP_LEFT, iter + 1));
                                     break;
                                 } else {
                                     blockCounter++;
@@ -407,14 +400,14 @@ public class Table implements LaunchpadReceiver {
                                 if (findCheckerByCoordinates(x + 1, y + 1) != null) {
 
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()) {
-                                        list.add(new Vector(Direction.UP_RIGHT, 2));
+                                        list.add(new Vector(Vector.Direction.UP_RIGHT, 2));
                                     }
                                 }
                             }
                         }
                     } else {
                         if (checker.getColor() == Color.GREEN) {
-                            list.add(new Vector(Direction.UP_RIGHT, 1));
+                            list.add(new Vector(Vector.Direction.UP_RIGHT, 1));
                         }
                     }
                 } else {
@@ -423,13 +416,13 @@ public class Table implements LaunchpadReceiver {
                     int blockCounter = 0;
                     while (i < 8 && j < 8) {
                         if (!isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
-                            list.add(new Vector(Direction.UP_RIGHT, iter));
+                            list.add(new Vector(Vector.Direction.UP_RIGHT, iter));
                         } else if (isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
 
                             if (findCheckerByCoordinates(i + 1, j + 1) != null) {
 
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor() && !isBusy(i + 2, j + 2)) {
-                                    list.add(new Vector(Direction.UP_RIGHT, iter + 1));
+                                    list.add(new Vector(Vector.Direction.UP_RIGHT, iter + 1));
                                     break;
                                 } else {
                                     blockCounter++;
@@ -459,14 +452,14 @@ public class Table implements LaunchpadReceiver {
                                 if (findCheckerByCoordinates(x + 1, y - 1) != null) {
 
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {
-                                        list.add(new Vector(Direction.DOWN_RIGHT, 2));
+                                        list.add(new Vector(Vector.Direction.DOWN_RIGHT, 2));
                                     }
                                 }
                             }
                         }
                     } else {
                         if (checker.getColor() == Color.RED) {
-                            list.add(new Vector(Direction.DOWN_RIGHT, 1));
+                            list.add(new Vector(Vector.Direction.DOWN_RIGHT, 1));
                         }
                     }
                 } else {
@@ -475,13 +468,13 @@ public class Table implements LaunchpadReceiver {
                     int blockCounter = 0;
                     while (i < 8 && j >= 0) {
                         if (!isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
-                            list.add(new Vector(Direction.DOWN_RIGHT, iter));
+                            list.add(new Vector(Vector.Direction.DOWN_RIGHT, iter));
                         } else if (isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
 
                             if (findCheckerByCoordinates(i + 1, j - 1) != null) {
 
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor() && !isBusy(i + 2, j - 2)) {
-                                    list.add(new Vector(Direction.DOWN_RIGHT, iter + 1));
+                                    list.add(new Vector(Vector.Direction.DOWN_RIGHT, iter + 1));
                                     break;
                                 } else {
                                     blockCounter++;
@@ -524,58 +517,4 @@ public class Table implements LaunchpadReceiver {
         }
         return null;
     }
-}
-
-class Vector {//класс Vector необходим для расчётов допустимых ходов и всего что связано с перемещением по полю
-    private Table.Direction direction;//Направление вектора
-    private int length;//Длина вектора
-
-    Vector(Table.Direction direction, int length) {
-        this.direction = direction;
-        this.length = length;
-    }
-
-    int getX(int checkerX) {//находим конечный "x" вектора относительо данного "x"
-        switch (direction) {
-            case UP_RIGHT:
-                checkerX += length;
-                break;
-            case DOWN_RIGHT:
-                checkerX += length;
-                break;
-            case DOWN_LEFT:
-                checkerX -= length;
-                break;
-            case UP_LEFT:
-                checkerX -= length;
-                break;
-        }
-        return checkerX;
-    }
-
-    int getY(int checkerY) {//находим конечный "y" вектора относительо данного "y"
-        switch (direction) {
-            case UP_LEFT:
-                checkerY += length;
-                break;
-            case UP_RIGHT:
-                checkerY += length;
-                break;
-            case DOWN_LEFT:
-                checkerY -= length;
-                break;
-            case DOWN_RIGHT:
-                checkerY -= length;
-                break;
-        }
-        return checkerY;
-    }
-
-    Table.Direction getDirection() {
-        return direction;
-    }//возвращаем направление вектора
-
-    int getLength() {
-        return length;
-    }//возвращаем длину вектора
 }
