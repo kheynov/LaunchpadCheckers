@@ -53,7 +53,7 @@ public class Table implements LaunchpadReceiver {
                             checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),
                                     tmpVector.getY(lastClickedChecker.getY())));
                             lastClickedChecker.move(vector);
-                            if (!isExtraMoveAvailable(availableMoves(lastClickedChecker))){
+                            if (!isExtraMoveAvailable(availableMoves(lastClickedChecker), lastClickedChecker)){
                                 showAvailableMoves(lastClickedChecker);
                                 isWhiteTurn = !isWhiteTurn;
                             }
@@ -107,8 +107,6 @@ public class Table implements LaunchpadReceiver {
     private void closeGame() {
         clearDisplay();
         animateFlush(getWinnerColor());
-//        clearCheckers();
-//        clearAvailableMoves();
     }
 
     private boolean isBecomeQueen(Checker checker) {
@@ -157,13 +155,17 @@ public class Table implements LaunchpadReceiver {
             }
         }
     }
-    boolean isExtraMoveAvailable(List<Vector> availableMoves){
-        for (Vector move : availableMoves){
-            if (move.getLength()>=2){
-                return true;
+    boolean isExtraMoveAvailable(List<Vector> availableMoves, Checker checker){
+        if (!checker.isQueen) {
+            for (Vector move : availableMoves) {
+                if (move.getLength() >= 2) {
+                    return true;
+                }
             }
+            return false;
+        }else{
+            return false;
         }
-        return false;
     }
 
     private void clearAvailableMoves() {
@@ -338,7 +340,7 @@ public class Table implements LaunchpadReceiver {
                             if (findCheckerByCoordinates(i - 1, j - 1) != null) {//Если в этой клетке находится шашка
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor() && !isBusy(i - 2, j - 2)) {//если соседняя шашка другого цвета и следующая за ней свободна
                                     list.add(new Vector(Direction.DOWN_LEFT, iter + 1));
-//                                    break;
+                                    break;
                                 }
                                 else{
                                     blockCounter++;
@@ -386,7 +388,7 @@ public class Table implements LaunchpadReceiver {
                             if (findCheckerByCoordinates(i - 1, j + 1) != null) {
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor() && !isBusy(i - 2, j + 2)) {
                                     list.add(new Vector(Direction.UP_LEFT, iter + 1));
-//                                    break;
+                                    break;
                                 }
                                 else{
                                     blockCounter++;
@@ -434,7 +436,7 @@ public class Table implements LaunchpadReceiver {
                             if (findCheckerByCoordinates(i + 1, j + 1) != null) {
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor()&&!isBusy(i+2,j+2)) {
                                     list.add(new Vector(Direction.UP_RIGHT, iter + 1));
-//                                    break;
+                                    break;
                                 }
                                 else{
                                     blockCounter++;
@@ -481,7 +483,7 @@ public class Table implements LaunchpadReceiver {
                             if (findCheckerByCoordinates(i + 1, j - 1) != null) {
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor()&&!isBusy(i+2,j-2)) {
                                     list.add(new Vector(Direction.DOWN_RIGHT, iter + 1));
-//                                    break;
+                                    break;
                                 }
                                 else{
                                     blockCounter++;
