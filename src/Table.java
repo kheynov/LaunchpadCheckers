@@ -35,6 +35,7 @@ public class Table implements LaunchpadReceiver {
         redraw();//перерисовываем
     }
 
+
     @Override
     public void receive(Pad pad) {
         if (isReadyToStep) {//если ходим
@@ -68,8 +69,7 @@ public class Table implements LaunchpadReceiver {
                 }
             }
             clearAvailableMoves();//очищаем доступные ходы
-            redraw();
-            //обработка хода
+            redraw();//перерисовываем
         } else {
             isReadyToStep = true;//следующим действием будем ходить
             for (Checker checker : checkerList) {//для всех шашек на поле
@@ -90,17 +90,14 @@ public class Table implements LaunchpadReceiver {
                 }
             }
         }
-
-        if (checkWinner()) {
+        if (checkWinner()) {//если шашки одного цвета, значит игра окончена
             closeGame();
-        }//если шашки одного цвета, значит игра окончена
-
+        }
     }
 
     private void closeGame() {//игра окончена
         clearDisplay();//очищаем дисплей
         animateFlush(getWinnerColor());//делаем анимацию цветом победителя
-//        Main.isRunning = false;//выключаем программу
     }
 
     private boolean isBecomeQueen(Checker checker) {//Проверяем шашку, стала ли она дамкой
@@ -154,7 +151,16 @@ public class Table implements LaunchpadReceiver {
             }
             return false;
         } else {
-            return false;
+            int x = checker.getX();
+            int y = checker.getY();
+
+            if (isBusy(x + 1, y + 1) && isMapContains(x + 2, y + 2) && !isBusy(x + 2, y + 2)) {
+                return true;
+            } else if (isBusy(x + 1, y - 1) && isMapContains(x + 2, y - 2) && !isBusy(x + 2, y - 2)) {
+                return true;
+            } else if (isBusy(x - 1, y + 1) && isMapContains(x - 2, y + 2) && !isBusy(x - 2, y + 2)) {
+                return true;
+            } else return isBusy(x - 1, y - 1) && isMapContains(x - 2, y - 2) && !isBusy(x - 2, y - 2);
         }
     }
 
@@ -231,7 +237,6 @@ public class Table implements LaunchpadReceiver {
     private void generateStartMap() {//создание стартового поля, просто 2 цикла по определению четной и нечётной клетки поля
         for (int i = 1; i <= 8; i++) {
             if (i % 2 == 0) {
-
                 checkerList.add(new Checker(i - 1, 1, Color.GREEN));
             } else {
                 checkerList.add(new Checker(i - 1, 0, Color.GREEN));
