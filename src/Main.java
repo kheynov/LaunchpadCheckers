@@ -1,6 +1,6 @@
 public class Main implements Runnable {
 
-    private boolean isRunning = true;
+    static boolean isRunning = true;
 
     public static void main(String[] args) {
         new Main().run();

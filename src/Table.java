@@ -11,17 +11,17 @@ import java.util.Objects;
 
 public class Table implements LaunchpadReceiver {
 
-    private Launchpad launchpad;
-    private ArrayList<Checker> checkerList = new ArrayList<>();
-    private ArrayList<Vector> availableMoves = new ArrayList<>();
-    private Checker lastClickedChecker;
-    private boolean isReadyToStep = false;
-    private boolean isWhiteTurn = true;
+    private Launchpad launchpad;//объект для связи с MIDI устройством
+    private ArrayList<Checker> checkerList = new ArrayList<>();//лист со всеми шашками на поле
+    private ArrayList<Vector> availableMoves = new ArrayList<>();//список доступных ходов для конкретной шашки
+    private Checker lastClickedChecker;//последняя нажатая шашка
+    private boolean isReadyToStep = false;//отрисовали доступные ходы, можем ходить
+    private boolean isWhiteTurn = true;//очередь ходить для белых шашек
 
     Table() throws MidiUnavailableException {
 
-        this.launchpad = new Launchpad(this);
-        clearDisplay();
+        this.launchpad = new Launchpad(this);//объявляем Novation Launchpad
+        clearDisplay();//очищаем экран
 
         try {
             Thread.sleep(500);
@@ -29,67 +29,59 @@ public class Table implements LaunchpadReceiver {
             e.printStackTrace();
         }
 
-        animateFlush(Color.AMBER);
-        clearDisplay();
-        System.out.println("Game Started");
-        generateStartMap();
-//        generateTestMap();
-        redraw();
+        animateFlush(Color.AMBER);//рисуем анимацию желтым цветом
+        clearDisplay();//снова очищаем дисплей
+        generateStartMap();//создаем начальное поле с шашками
+        redraw();//перерисовываем
     }
 
     @Override
     public void receive(Pad pad) {
-        redraw();
-        if (isReadyToStep) {
-            isReadyToStep = false;
-            for (Vector vector : availableMoves) {
-
-                if (vector != null && lastClickedChecker != null) {
-
-                    if (vector.getX(lastClickedChecker.getX()) == pad.getX() && vector.getY(lastClickedChecker.getY()) == pad.getY()) {
-
-                        if (vector.getLength() > 1) {
-                            Vector tmpVector = new Vector(vector.getDirection(), vector.getLength() - 1);
-                            checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),
+        if (isReadyToStep) {//если ходим
+            isReadyToStep = false;//убираем флажок с переменной, значит мы походили или отменили ход, значит потом надо будет снова отрисовать ходы
+            for (Vector vector : availableMoves) {//для каждого доступного хода
+                if (vector != null && lastClickedChecker != null) {//если ход и шашка не null
+                    if (vector.getX(lastClickedChecker.getX()) == pad.getX() && vector.getY(lastClickedChecker.getY()) == pad.getY()) {//если мы нажали именно на шашку
+                        if (vector.getLength() > 1) {//если мы рубим(длина хода > 1)
+                            Vector tmpVector = new Vector(vector.getDirection(), vector.getLength() - 1);//создаем временный(template) Vector на котором находится шашка которую мы хотим срубить
+                            checkerList.remove(findCheckerByCoordinates(tmpVector.getX(lastClickedChecker.getX()),//удаляем шашку противника, мы же её срубили
                                     tmpVector.getY(lastClickedChecker.getY())));
-                            lastClickedChecker.move(vector);
-                            if (!isExtraMoveAvailable(availableMoves(lastClickedChecker), lastClickedChecker)){
-                                showAvailableMoves(lastClickedChecker);
+
+                            lastClickedChecker.move(vector);//передвигаем шашку
+                            if (!isExtraMoveAvailable(availableMoves(lastClickedChecker), lastClickedChecker)) {//если мы можем дальше срубить
+                                showAvailableMoves(lastClickedChecker);//предлагаем еще ходить
                                 isWhiteTurn = !isWhiteTurn;
                             }
-                        }else {
-                            lastClickedChecker.move(vector);
-                            isWhiteTurn = !isWhiteTurn;
+                        } else {
+                            lastClickedChecker.move(vector);//просто ходим на одну клетку
+                            isWhiteTurn = !isWhiteTurn;//очередь соперника
                         }
 
-                        if (isBecomeQueen(lastClickedChecker)) {
+                        if (isBecomeQueen(lastClickedChecker)) {//если шашка стала дамкой
                             lastClickedChecker.setQueen();
                         }
 
-                        redraw();
-                        lastClickedChecker = null;
+                        redraw();//перерисовываем все поле
+                        lastClickedChecker = null;//стираем информацию о последней нажатой шашке
                         break;
                     }
                 }
             }
-            clearAvailableMoves();
+            clearAvailableMoves();//очищаем доступные ходы
             redraw();
             //обработка хода
         } else {
-
-            isReadyToStep = true;
-
-            for (Checker checker : checkerList) {
-                if (checker.getX() == pad.getX() && checker.getY() == pad.getY()) {
-                    if (isWhiteTurn) {
-                        if (checker.getColor() == Color.GREEN) {
-                            redraw();
-                            lastClickedChecker = checker;
-                            showAvailableMoves(checker);
-
+            isReadyToStep = true;//следующим действием будем ходить
+            for (Checker checker : checkerList) {//для всех шашек на поле
+                if (checker.getX() == pad.getX() && checker.getY() == pad.getY()) {//если мы нажали на шашку
+                    if (isWhiteTurn) {//если очередь ходить для белых
+                        if (checker.getColor() == Color.GREEN) {//и если мы нажали на белую шашку
+                            redraw();//перерисовываем
+                            lastClickedChecker = checker;//обозначаем как используемую в данный момент
+                            showAvailableMoves(checker);//показываем доступные ходы
                         }
                     } else {
-                        if (checker.getColor() == Color.RED) {
+                        if (checker.getColor() == Color.RED) {//аналогично для другого цвета
                             redraw();
                             lastClickedChecker = checker;
                             showAvailableMoves(checker);
@@ -101,25 +93,23 @@ public class Table implements LaunchpadReceiver {
 
         if (checkWinner()) {
             closeGame();
-        }
+        }//если шашки одного цвета, значит игра окончена
+
     }
 
-    private void closeGame() {
-        clearDisplay();
-        animateFlush(getWinnerColor());
+    private void closeGame() {//игра окончена
+        clearDisplay();//очищаем дисплей
+        animateFlush(getWinnerColor());//делаем анимацию цветом победителя
+//        Main.isRunning = false;//выключаем программу
     }
 
-    private boolean isBecomeQueen(Checker checker) {
-        if (checker.getColor() == Color.RED && checker.getY() == 0) {
+    private boolean isBecomeQueen(Checker checker) {//Проверяем шашку, стала ли она дамкой
+        if (checker.getColor() == Color.RED && checker.getY() == 0) {//крайние значения для соответствующих цветов
             return true;
-        } else if (checker.getColor() == Color.GREEN && checker.getY() == 7) {
-            return true;
-        } else {
-            return false;
-        }
+        } else return checker.getColor() == Color.GREEN && checker.getY() == 7;
     }
 
-    private void animateFlush(Color color) {
+    private void animateFlush(Color color) {//анимация, просто два цикла, которые по очереди зажигают светодиоды змейкой с двух сторон
         for (int i = 0; i < 5; i++) {
             for (int j = 0; j < 8; j++) {
                 try {
@@ -142,10 +132,9 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    private void clearDisplay() {
+    private void clearDisplay() {//очищаем дисплей, просто присваиваем каждому светодиоду 0
 
         for (int i = 0; i < 8; i++) {
-
             for (int j = 0; j < 8; j++) {
                 try {
                     launchpad.set(Pad.find(i, j), Color.BLANK);
@@ -155,39 +144,38 @@ public class Table implements LaunchpadReceiver {
             }
         }
     }
-    boolean isExtraMoveAvailable(List<Vector> availableMoves, Checker checker){
-        if (!checker.isQueen) {
-            for (Vector move : availableMoves) {
+
+    private boolean isExtraMoveAvailable(List<Vector> availableMoves, Checker checker) {//если мы еще можем походить
+        if (!checker.isQueen) {//если шашка не дамка(дамки и так слишком дизбалансные)
+            for (Vector move : availableMoves) {//если мы можем походить в любую из сторон больше чем на 1 клетку, т.е. срубить, то мы можем ходить еще
                 if (move.getLength() >= 2) {
                     return true;
                 }
             }
             return false;
-        }else{
+        } else {
             return false;
         }
     }
 
-    private void clearAvailableMoves() {
+    private void clearAvailableMoves() {//просто очищаем массив с доступными ходами, чтобы мы могли отрисовать их для другой шашки
         for (int i = 0; i < availableMoves.size(); i++) {
             Vector vector = availableMoves.get(i);
             availableMoves.remove(vector);
         }
     }
 
-    private boolean checkWinner() {
-
+    private boolean checkWinner() {//считаем сколько шашек каждого цвета осталось на поле, и проверяем, не выиграла ли какая-либо сторона
         int whites = 0;
         int blacks = 0;
-
         for (Checker checker : checkerList) {
-            if (checker.getColor() == Color.RED) {
+            if (checker.getColor() == Color.RED || checker.getColor() == Color.R2G1) {
                 blacks++;
             } else {
                 whites++;
             }
         }
-        System.out.println("G: " + whites + " R: " + blacks);
+
         if (blacks == 0) {
             System.out.println("Победили зелёные");
             return true;
@@ -199,13 +187,12 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    private Color getWinnerColor() {
-
+    private Color getWinnerColor() {//смотрим какого цвета победитель
         int whites = 0;
         int blacks = 0;
 
         for (Checker checker : checkerList) {
-            if (checker.getColor() == Color.RED) {
+            if (checker.getColor() == Color.RED || checker.getColor() == Color.R2G1) {
                 blacks++;
             } else {
                 whites++;
@@ -221,19 +208,19 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    private void redraw() {
+    private void redraw() {//перерисовываем карту
 
-        clearDisplay();
-        for (Checker checker : checkerList) {
+        clearDisplay();//очищаем дисплей
+        for (Checker checker : checkerList) {//для каждой шашки
             try {
-                if (checker.isQueen) {
-                    if (checker.getColor() == Color.RED) {
-                        launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R2G1);
+                if (checker.isQueen) {//если дамка
+                    if (checker.getColor() == Color.RED) {//если она красная по своей сути
+                        launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R2G1);//рисуем ее цвета дамки
                     } else {
-                        launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R1G2);
+                        launchpad.set(Pad.find(checker.getX(), checker.getY()), Color.R1G2);//рисуем её цвета зелёной дамки
                     }
                 } else {
-                    launchpad.set(Pad.find(checker.getX(), checker.getY()), checker.getColor());
+                    launchpad.set(Pad.find(checker.getX(), checker.getY()), checker.getColor());//если шашка не дамка, рисуем как есть
                 }
             } catch (InvalidMidiDataException e) {
                 e.printStackTrace();
@@ -241,18 +228,7 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    private void generateTestMap() {
-
-        Checker red_checker = new Checker(1, 1, Color.RED);
-        red_checker.isQueen = true;
-
-        Checker green_checker = new Checker(5, 3, Color.GREEN);
-
-        checkerList.add(red_checker);
-        checkerList.add(green_checker);
-    }
-
-    private void generateStartMap() {
+    private void generateStartMap() {//создание стартового поля, просто 2 цикла по определению четной и нечётной клетки поля
         for (int i = 1; i <= 8; i++) {
             if (i % 2 == 0) {
 
@@ -273,7 +249,7 @@ public class Table implements LaunchpadReceiver {
         }
     }
 
-    public enum Direction {
+    public enum Direction {//все направления, в который мы можем походить
         UP_LEFT,
         UP_RIGHT,
         DOWN_LEFT,
@@ -284,17 +260,17 @@ public class Table implements LaunchpadReceiver {
         return x != 0 && x != 7 && y != 0 && y != 7;
     }
 
-    private void showAvailableMoves(Checker checker) {
+    private void showAvailableMoves(Checker checker) {//рисуем доступные ходы
 
-        availableMoves = (ArrayList<Vector>) availableMoves(checker);
+        availableMoves = (ArrayList<Vector>) availableMoves(checker);//генерируем доступные ходы в методе availableMoves(Checker checker)
 
-        for (Vector availableMove : availableMoves) {
+        for (Vector availableMove : availableMoves) {//для каждого хода
 
-            int x = availableMove.getX(checker.getX());
+            int x = availableMove.getX(checker.getX());//находим конечную точку относительно координат шашки, на которую нажали
             int y = availableMove.getY(checker.getY());
 
             try {
-                if (isMapContains(x, y)) {
+                if (isMapContains(x, y)) {//если эта координата не за пределами поля
                     launchpad.set(Pad.find(x, y), Color.AMBER);//выводим возможные варианты хода
                 }
             } catch (InvalidMidiDataException e) {
@@ -305,78 +281,90 @@ public class Table implements LaunchpadReceiver {
 
     private List<Vector> availableMoves(Checker checker) {
 
-        int x = checker.getX();
+        int x = checker.getX();//координаты шашки для которой мы ищем доступные ходы
         int y = checker.getY();
 
         List<Vector> list = new ArrayList<>();
 
-        if (x != 0) {
-            if (y != 0) {
-                if (!checker.isQueen) {
-                    if (isBusy(x - 1, y - 1)) {
-                        if (isNotLastChecker(x - 1, y - 1)) {
-                            if (!isBusy(x - 2, y - 2)) {
-                                if (findCheckerByCoordinates(x - 1, y - 1) != null) {
-                                    if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {
-                                        list.add(new Vector(Direction.DOWN_LEFT, 2));
+        if (x != 0) {//если мы не слева
+            if (y != 0) {//если мы не в левом нижнем углу (мы не можем ходить вправо вниз и вправо вверх(см прошлое условие))
+
+                if (!checker.isQueen) {//если шашка не дамка
+
+                    if (isBusy(x - 1, y - 1)) {//если клетка в которую мы хотим походить занята
+
+                        if (isNotLastChecker(x - 1, y - 1)) {//и если это не последняя клетка поля(ведь тогда ее нельзя срубить)
+
+                            if (!isBusy(x - 2, y - 2)) {//если клетка за той, которую мы хотим срубить свободна
+
+                                if (findCheckerByCoordinates(x - 1, y - 1) != null) {//удостоверяемся, что клетка которую мы рубим не null
+
+                                    if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y - 1)).getColor() != checker.getColor()) {//если это фишка соперника(другого цвета)
+                                        list.add(new Vector(Direction.DOWN_LEFT, 2));//то мы её рубим
                                     }
                                 }
                             }
                         }
-                    } else {
-
-                        if (checker.getColor() == Color.RED || checker.isQueen) {
+                    } else {//если клетка в которую мы ходим свободна, то мы просто ходим туда
+                        if (checker.getColor() == Color.RED) {//если шашка красного цвета (ведь шашки назад ходить не могут, только рубить)
                             list.add(new Vector(Direction.DOWN_LEFT, 1));
                         }
                     }
-                } else {
-                    int i = checker.getX(), j = checker.getY();
-                    int iter = 1;
-                    int blockCounter = 0;
-                    while (i >= 0 && j >= 0) {
+                } else {// если шашка все-таки дамка
+                    int i = checker.getX(), j = checker.getY();//координаты шашек
+                    int iter = 1;//счетчик уже сделанных ходов
+                    int blockCounter = 0;//счетчик заблокированных ходов
+                    while (i >= 0 && j >= 0) {//пока мы не уперлись в стену
                         if (!isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {//если соседняя клетка не занята и она в пределах карты
-                            list.add(new Vector(Direction.DOWN_LEFT, iter));
+                            list.add(new Vector(Direction.DOWN_LEFT, iter));//ходим туда
                         } else if (isBusy(i - 1, j - 1) && isMapContains(i - 1, j - 1)) {//если клетка все таки занята
+
                             if (findCheckerByCoordinates(i - 1, j - 1) != null) {//Если в этой клетке находится шашка
+
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j - 1)).getColor() != checker.getColor() && !isBusy(i - 2, j - 2)) {//если соседняя шашка другого цвета и следующая за ней свободна
-                                    list.add(new Vector(Direction.DOWN_LEFT, iter + 1));
-                                    break;
+                                    list.add(new Vector(Direction.DOWN_LEFT, iter + 1));//ходим в следующую за ней(рубим)
+                                    break;//и выходим из цикла, дальше мы идти не будем
+                                } else {
+                                    blockCounter++;//если в той клетке было занятно, увеличиваем счетчик заблокированных ходов
                                 }
-                                else{
-                                    blockCounter++;
-                                }
+
                             }
-                        }else{
-                            blockCounter++;
+                        } else {
+                            blockCounter++;//увеличиваем счетчик заблокированных ходов
                         }
-                        if (blockCounter>=1){
-                            break;
+                        if (blockCounter >= 1) {//если нам на пути встретилось подряд уже два препятствия, значит туда нам уже не попасть
+                            break;//выходим из цикла
                         }
-                        iter++;
+                        iter++;//увеличиваем/уменьшаем счетчики направлений и т.п.
                         i--;
                         j--;
 
                     }
                 }
             }
-            if (y != 7) {
-                if (!checker.isQueen) {
+            if (y != 7) {//если мы не в левом верхнем углу
+                if (!checker.isQueen) {//здесь все аналогично остальным направлениям, изменяется только направление из 4-х
+
                     if (isBusy(x - 1, y + 1)) {
+
                         if (isNotLastChecker(x - 1, y + 1)) {
+
                             if (!isBusy(x - 2, y + 2)) {
+
                                 if (findCheckerByCoordinates(x - 1, y + 1) != null) {
+
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x - 1, y + 1)).getColor() != checker.getColor()) {
                                         list.add(new Vector(Direction.UP_LEFT, 2));
                                     }
                                 }
-
                             }
                         }
                     } else {
-                        if (checker.getColor() == Color.GREEN || checker.isQueen) {
+                        if (checker.getColor() == Color.GREEN) {
                             list.add(new Vector(Direction.UP_LEFT, 1));
                         }
                     }
+
                 } else {
                     int i = checker.getX(), j = checker.getY();
                     int iter = 1;
@@ -389,15 +377,14 @@ public class Table implements LaunchpadReceiver {
                                 if (Objects.requireNonNull(findCheckerByCoordinates(i - 1, j + 1)).getColor() != checker.getColor() && !isBusy(i - 2, j + 2)) {
                                     list.add(new Vector(Direction.UP_LEFT, iter + 1));
                                     break;
-                                }
-                                else{
+                                } else {
                                     blockCounter++;
                                 }
                             }
-                        }else{
+                        } else {
                             blockCounter++;
                         }
-                        if (blockCounter>=1){
+                        if (blockCounter >= 1) {
                             break;
                         }
                         iter++;
@@ -407,13 +394,18 @@ public class Table implements LaunchpadReceiver {
                 }
             }
         }
-        if (x != 7) {
-            if (y != 7) {
+        if (x != 7) {//если мы не справа
+            if (y != 7) {//если мы не справа сверху
                 if (!checker.isQueen) {
+
                     if (isBusy(x + 1, y + 1)) {//аналогично на все 4 диагонали
+
                         if (isNotLastChecker(x + 1, y + 1)) {
+
                             if (!isBusy(x + 2, y + 2)) {
+
                                 if (findCheckerByCoordinates(x + 1, y + 1) != null) {
+
                                     if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y + 1)).getColor() != checker.getColor()) {
                                         list.add(new Vector(Direction.UP_RIGHT, 2));
                                     }
@@ -421,7 +413,7 @@ public class Table implements LaunchpadReceiver {
                             }
                         }
                     } else {
-                        if (checker.getColor() == Color.GREEN || checker.isQueen) {
+                        if (checker.getColor() == Color.GREEN) {
                             list.add(new Vector(Direction.UP_RIGHT, 1));
                         }
                     }
@@ -433,43 +425,48 @@ public class Table implements LaunchpadReceiver {
                         if (!isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
                             list.add(new Vector(Direction.UP_RIGHT, iter));
                         } else if (isBusy(i + 1, j + 1) && isMapContains(i + 1, j + 1)) {
+
                             if (findCheckerByCoordinates(i + 1, j + 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor()&&!isBusy(i+2,j+2)) {
+
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j + 1)).getColor() != checker.getColor() && !isBusy(i + 2, j + 2)) {
                                     list.add(new Vector(Direction.UP_RIGHT, iter + 1));
                                     break;
-                                }
-                                else{
+                                } else {
                                     blockCounter++;
                                 }
                             }
-                        }else{
+                        } else {
                             blockCounter++;
                         }
-                        if (blockCounter>=1){
+                        if (blockCounter >= 1) {
                             break;
                         }
                         iter++;
                         i++;
                         j++;
-
                     }
                 }
             }
-            if (y != 0) {
+            if (y != 0) {//если мы не в правом нижнем углу
                 if (!checker.isQueen) {
-                    if (isBusy(x + 1, y - 1)) {//если соседняя клетка занята, но она не крайняя на поле
+
+                    if (isBusy(x + 1, y - 1)) {
+
                         if (isNotLastChecker(x + 1, y - 1)) {
-                            if (!isBusy(x + 2, y - 2)) {//если клетка в которую мы хотим походить свободна
+
+                            if (!isBusy(x + 2, y - 2)) {
+
                                 if (findCheckerByCoordinates(x + 1, y - 1) != null) {
-                                    if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {//если мы шагаем не через клетку своего цвета
-                                        list.add(new Vector(Direction.DOWN_RIGHT, 2));//то можно перешагнуть
+
+                                    if (Objects.requireNonNull(findCheckerByCoordinates(x + 1, y - 1)).getColor() != checker.getColor()) {
+                                        list.add(new Vector(Direction.DOWN_RIGHT, 2));
                                     }
                                 }
                             }
                         }
                     } else {
-                        if (checker.getColor() == Color.RED || checker.isQueen) {
-                            list.add(new Vector(Direction.DOWN_RIGHT, 1));//просто ходим на 1 клетку
+                        if (checker.getColor() == Color.RED) {
+                            list.add(new Vector(Direction.DOWN_RIGHT, 1));
                         }
                     }
                 } else {
@@ -480,19 +477,20 @@ public class Table implements LaunchpadReceiver {
                         if (!isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
                             list.add(new Vector(Direction.DOWN_RIGHT, iter));
                         } else if (isBusy(i + 1, j - 1) && isMapContains(i + 1, j - 1)) {
+
                             if (findCheckerByCoordinates(i + 1, j - 1) != null) {
-                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor()&&!isBusy(i+2,j-2)) {
+
+                                if (Objects.requireNonNull(findCheckerByCoordinates(i + 1, j - 1)).getColor() != checker.getColor() && !isBusy(i + 2, j - 2)) {
                                     list.add(new Vector(Direction.DOWN_RIGHT, iter + 1));
                                     break;
-                                }
-                                else{
+                                } else {
                                     blockCounter++;
                                 }
                             }
-                        }else{
+                        } else {
                             blockCounter++;
                         }
-                        if (blockCounter>=1){
+                        if (blockCounter >= 1) {
                             break;
                         }
                         iter++;
@@ -506,8 +504,7 @@ public class Table implements LaunchpadReceiver {
     }
 
     private boolean isBusy(int checkerX, int checkerY) {//если клетка по данным координатом занята другой шашкой
-
-        for (Checker checker : checkerList) {
+        for (Checker checker : checkerList) {//проходим по всем шашкам и сверяем с данными координатами
             if (checker.getX() == checkerX && checker.getY() == checkerY) {
                 return true;
             }
@@ -515,30 +512,30 @@ public class Table implements LaunchpadReceiver {
         return false;
     }
 
-    private boolean isMapContains(int x, int y) {
+    private boolean isMapContains(int x, int y) {//проверка на принадлежность шашки игровому полю
         return x >= 0 && x <= 7 && y >= 0 && y <= 7;
     }
 
     private Checker findCheckerByCoordinates(int x, int y) {//находим объект шашки по координатам
-        for (Checker checker : checkerList) {
+        for (Checker checker : checkerList) {//проходим по всем шашкам и ищем совпадение
             if (checker.getX() == x && checker.getY() == y) {
-                return checker;
+                return checker;//если нашли, возвращаем объект найденной шашки
             }
         }
         return null;
     }
 }
 
-class Vector {
-    private Table.Direction direction;
-    private int length;
+class Vector {//класс Vector необходим для расчётов допустимых ходов и всего что связано с перемещением по полю
+    private Table.Direction direction;//Направление вектора
+    private int length;//Длина вектора
 
     Vector(Table.Direction direction, int length) {
         this.direction = direction;
         this.length = length;
     }
 
-    int getX(int checkerX) {
+    int getX(int checkerX) {//находим конечный "x" вектора относительо данного "x"
         switch (direction) {
             case UP_RIGHT:
                 checkerX += length;
@@ -556,7 +553,7 @@ class Vector {
         return checkerX;
     }
 
-    int getY(int checkerY) {
+    int getY(int checkerY) {//находим конечный "y" вектора относительо данного "y"
         switch (direction) {
             case UP_LEFT:
                 checkerY += length;
@@ -576,9 +573,9 @@ class Vector {
 
     Table.Direction getDirection() {
         return direction;
-    }
+    }//возвращаем направление вектора
 
     int getLength() {
         return length;
-    }
+    }//возвращаем длину вектора
 }
